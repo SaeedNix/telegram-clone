@@ -11,6 +11,16 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    // React 19: Add React Compiler ESLint rules
+    rules: {
+      // React Compiler optimizations
+      'react-compiler/react-compiler': 'error',
+      // Additional React 19 best practices
+      'react-hooks/exhaustive-deps': 'warn',
+      'react/no-unused-prop-types': 'warn',
+    },
+  },
 ];
 
 export default eslintConfig;
