@@ -4,14 +4,14 @@ import { toast } from "react-toastify";
 const toaster = (
   status: "success" | "error" | "info" | "warning",
   message: string | ReactNode,
-  duration = 3000
+  duration = 2000
 ) => {
   toast[status](message, {
     position: "top-center",
     autoClose: duration,
     hideProgressBar: true,
     theme: "dark",
-    closeButton: false,
+    closeButton: true,
     style: {
       textAlign: "left",
       width: "fit-content",

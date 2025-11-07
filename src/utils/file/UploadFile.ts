@@ -46,10 +46,13 @@ const uploadFile = async (
 
     const uniqueFileName = `${Date.now()}-${uploadFile.name}`;
     const url = file.type.match("image.*") ? "images/" : "voices/";
+    const key = url + encodeURIComponent(uniqueFileName);
+    
     const params = {
       Bucket: bucketName,
-      Key: url + encodeURIComponent(uniqueFileName),
+      Key: key,
       Body: uploadFile,
+      ContentType: uploadFile.type,
     };
 
     if (onProgress) {
@@ -67,13 +70,13 @@ const uploadFile = async (
 
     const permanentSignedUrl = s3.getSignedUrl("getObject", {
       Bucket: bucketName,
-      Key: url + encodeURIComponent(uniqueFileName),
-      Expires: 31536000000,
+      Key: key,
+      Expires: 31536000000, // 1 year
     });
 
     return permanentSignedUrl;
   } catch (error) {
-    console.error("Upload failed:", error);
+    throw error; // Re-throw the error to be caught by retry logic
   }
 };
 
@@ -99,15 +102,8 @@ const uploadFileWithRetry = async (
       return { success: true, downloadUrl: result };
     } catch (error: unknown) {
       if (i < MAX_RETRIES - 1) {
-        console.warn(
-          `Upload failed, retrying in ${
-            RETRY_DELAY_MS / 1000
-          } seconds... (Attempt ${i + 1}/${MAX_RETRIES})`,
-          error
-        );
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
       } else {
-        console.error("Max retries reached. Upload failed permanently.", error);
         return {
           success: false,
           error:

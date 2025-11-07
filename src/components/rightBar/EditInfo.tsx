@@ -70,9 +70,15 @@ const EditInfo = ({
   const submitInfo = useCallback(async () => {
     const socket = useSockets.getState().rooms;
     try {
-      const uploadedImageUrl = imageFile
-        ? await uploadFile(imageFile)
-        : roomImage;
+      let uploadedImageUrl = roomImage;
+      if (imageFile) {
+        const uploadResult = await uploadFile(imageFile);
+        if (uploadResult.success && uploadResult.downloadUrl) {
+          uploadedImageUrl = uploadResult.downloadUrl;
+        } else {
+          throw new Error(uploadResult.error || "Upload failed");
+        }
+      }
 
       socket?.emit("updateRoomData", {
         roomID,

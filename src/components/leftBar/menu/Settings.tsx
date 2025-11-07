@@ -84,19 +84,14 @@ const Settings = ({ getBack, updateRoute }: Props) => {
       const socket = useSockets.getState().rooms;
 
       if (uploadedImageFile) {
-        console.log("sss");
         let imageUrl;
         setIsLoading(true);
-        const fileImageUrl = await uploadFile(uploadedImageFile);
-        if (fileImageUrl) {
-          imageUrl = fileImageUrl;
+        const uploadResult = await uploadFile(uploadedImageFile);
+        if (uploadResult.success && uploadResult.downloadUrl) {
+          imageUrl = uploadResult.downloadUrl;
 
-          socket?.emit("updateUserData", {
-            userID: _id,
-            avatar: imageUrl,
-          });
-
-          socket?.on("updateUserData", () => {
+          // Listen for the response once before emitting
+          socket?.once("updateUserData", () => {
             userStateUpdater((prev) => ({
               ...prev,
               avatar: imageUrl!,
@@ -104,6 +99,12 @@ const Settings = ({ getBack, updateRoute }: Props) => {
 
             setUploadedImageFile(null);
             setUploadedImageUrl(null);
+            toaster("success", "Profile photo updated successfully!");
+          });
+
+          socket?.emit("updateUserData", {
+            userID: _id,
+            avatar: imageUrl,
           });
         }
       }
@@ -147,13 +148,15 @@ const Settings = ({ getBack, updateRoute }: Props) => {
           okText: "Delete",
           onSubmit: async () => {
             const socket = useSockets.getState().rooms;
-            socket?.emit("updateUserData", { userID: _id, avatar: "" });
-            socket?.on("updateUserData", () => {
+            // Listen for response first
+            socket?.once("updateUserData", () => {
               userStateUpdater((prev) => ({
                 ...prev,
                 avatar: "",
               }));
+              toaster("success", "Profile photo removed successfully!");
             });
+            socket?.emit("updateUserData", { userID: _id, avatar: "" });
             await deleteFile(avatar);
           },
         });
@@ -212,12 +215,13 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                 >
                   {avatar ? (
                     <Image
-                      src={avatar}
+                      src={`${avatar}${avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
                       className="cursor-pointer object-cover size-full rounded-full"
                       width={55}
                       height={55}
                       alt="avatar"
                       onClick={() => setIsViewerOpen(true)}
+                      priority
                     />
                   ) : (
                     <div className="flex-center bg-darkBlue shrink-0 text-center font-bold text-xl mt-1">

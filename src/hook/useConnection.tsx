@@ -6,7 +6,7 @@ import { UserStoreUpdater } from "@/stores/userStore";
 import { SocketsProps } from "@/stores/useSockets";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { pendingMessagesService } from "@/utils/pendingMessages";
+import { pendingMessagesService, PendingMessage } from "@/utils/pendingMessages";
 import { uploadFile as uploadFileWithRetry } from "@/utils";
 import { voiceBlobStorage } from "@/utils/voiceBlobStorage";
 
@@ -67,10 +67,9 @@ const useConnection = ({
     socket.on("joining", (roomData) => {
       if (roomData) {
         setter(() => {
-          // Load pending messages from localStorage
-          const pendingMessages = pendingMessagesService.getPendingMessages(
-            roomData._id
-          );
+          // Get pending messages for this room
+          const pendingMessages = pendingMessagesService.getPendingMessages(roomData._id);
+          
           const serverMessages = roomData.messages || [];
 
           // Merge server messages with pending messages

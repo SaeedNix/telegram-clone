@@ -108,8 +108,12 @@ const CreateRoom = () => {
 
     if (roomImage) {
       try {
-        const uploadedImageUrl = imageFile && (await uploadFile(imageFile));
-        imageUrl = uploadedImageUrl;
+        const uploadResult = imageFile && (await uploadFile(imageFile));
+        if (uploadResult && uploadResult.success && uploadResult.downloadUrl) {
+          imageUrl = uploadResult.downloadUrl;
+        } else {
+          throw new Error(uploadResult?.error || "Upload failed");
+        }
       } catch (error) {
         console.log(error);
         toaster("error", "Failed to upload image,try again ");

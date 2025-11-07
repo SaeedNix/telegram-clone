@@ -2,6 +2,7 @@ import useUserStore from "@/stores/userStore";
 import { toaster } from "@/utils";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useActionState, useTransition, useEffect } from "react";
 import Loading from "../modules/ui/Loading";
 import Button from "../modules/ui/Button";
 
@@ -9,6 +10,29 @@ type Inputs = {
   phone: number;
   password: string;
 };
+
+//  Server action for form submission
+async function signInAction(prevState: any, formData: FormData) {
+  try {
+    const phone = formData.get("phone") as string;
+    const password = formData.get("password") as string;
+
+    const response = await axios.post("/api/auth/login", { phone, password });
+
+    if (response.status === 200) {
+      return {
+        success: true,
+        data: response.data,
+        message: "You logged in successfully.",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Login failed",
+    };
+  }
+}
 
 const SignInForm = () => {
   const {
@@ -19,21 +43,33 @@ const SignInForm = () => {
 
   const { setter } = useUserStore((state) => state);
 
-  const submitForm: SubmitHandler<Inputs> = async (data) => {
-    try {
-      const response = await axios.post("/api/auth/login", data);
+  // Use useActionState for better form handling
+  const [actionState, formAction, isPending] = useActionState(
+    signInAction,
+    null
+  );
+  const [isTransition, startTransition] = useTransition();
 
-      if (response.status == 200) {
-        setter({
-          ...response.data,
-          isLogin: true,
-        });
-        toaster("success", "You logged in successfully.");
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toaster("error", error.response.data.message);
+  // Handle action state updates
+  useEffect(() => {
+    if (actionState?.success) {
+      setter({
+        ...actionState.data,
+        isLogin: true,
+      });
+      toaster("success", actionState.message);
+    } else if (actionState?.error) {
+      toaster("error", actionState.error);
     }
+  }, [actionState, setter]);
+
+  const submitForm: SubmitHandler<Inputs> = async (data) => {
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("phone", data.phone.toString());
+      formData.append("password", data.password);
+      await formAction(formData);
+    });
   };
 
   return (
@@ -130,9 +166,9 @@ const SignInForm = () => {
         color="info"
         classNames="w-full rounded-xl"
         onClick={handleSubmit(submitForm)}
-        disabled={!isValid || isSubmitting}
+        disabled={!isValid || isSubmitting || isPending || isTransition}
       >
-        {isSubmitting ? (
+        {isSubmitting || isPending || isTransition ? (
           <Loading loading="dots" size="lg" color="info" />
         ) : (
           "Sign in"

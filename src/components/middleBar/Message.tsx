@@ -217,7 +217,7 @@ const Message = memo((msgData: MessageModel & msgDataProps) => {
           )}
 
           <div className="flex flex-col text-sm gap-1 p-1 mt-1 break-words mb-3">
-            {replayedToMessage && !replayedToMessage.hideFor.includes(myId) && (
+            {replayedToMessage && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -235,10 +235,13 @@ const Message = memo((msgData: MessageModel & msgDataProps) => {
                   } left-0 inset-y-0 w-[3px] h-full`}
                 ></span>
                 <p className="font-vazirBold text-xs break-words text-start line-clamp-1 text-ellipsis">
-                  {replayedTo?.username}
+                  {replayedToMessage.hideFor.includes(myId)
+                    ? "Message deleted"
+                    : replayedTo?.username}
                 </p>
                 <p className="font-thin break-words line-clamp-1 text-ellipsis text-left text-xs whitespace-pre-wrap">
-                  {replayedTo?.message || "Voice Message"}
+                  {!replayedToMessage.hideFor.includes(myId) &&
+                    (replayedTo?.message || "Voice Message")}
                 </p>
               </div>
             )}
