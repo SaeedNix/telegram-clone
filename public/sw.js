@@ -1,5 +1,5 @@
-const STATIC_CACHE = "telegram-static-v4";
-const DYNAMIC_CACHE = "telegram-dynamic-v4";
+const STATIC_CACHE = "telegram-static-v5";
+const DYNAMIC_CACHE = "telegram-dynamic-v5";
 const MAX_DYNAMIC_CACHE_SIZE = 50;
 
 const ASSETS = [self.origin + "/"];
@@ -57,6 +57,11 @@ self.addEventListener("fetch", (event) => {
     url.pathname.includes("node_modules") ||
     url.hostname.includes("firestore.googleapis.com")
   ) {
+    return;
+  }
+
+  // Skip caching for PUT, POST, DELETE requests
+  if (event.request.method !== "GET") {
     return;
   }
 
@@ -131,6 +136,7 @@ const cacheFirst = async (request) => {
 const networkFirst = async (request) => {
   try {
     const response = await fetch(request);
+    // Only cache GET requests
     if (request.method === "GET") {
       const cache = await caches.open(DYNAMIC_CACHE);
       cache.put(request, response.clone());
