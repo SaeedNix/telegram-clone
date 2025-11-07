@@ -12,7 +12,7 @@ const Authentication = ({ children }: { children: ReactNode }) => {
   const { setter, isLogin } = useUserStore((state) => state);
 
   useEffect(() => {
-    registerSW();
+    // registerSW();
 
     (async () => {
       try {
