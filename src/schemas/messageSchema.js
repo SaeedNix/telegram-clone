@@ -25,7 +25,7 @@ export const schema = new Schema(
       },
       default: null,
     },
-    tempId: { type: String, unique: true, sparse: true },
+    tempId: { type: String, unique: true, sparse: true, index: true },
     status: {
       type: String,
       enum: ["pending", "sent", "failed"],
