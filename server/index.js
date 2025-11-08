@@ -41,10 +41,13 @@ io.on("connection", (socket) => {
         status: "sent",
       };
 
+      console.log(`[Server] Looking for existing message with tempId: ${tempId}`);
       let newMsg = await MessageSchema.findOne({ tempId }).lean();
+      console.log(`[Server] Found existing message:`, newMsg);
 
       if (newMsg) {
         // Already exists, emit updates
+        console.log(`[Server] Message already exists, sending updates...`);
         // Send newMessage to all users EXCEPT the sender
         socket.to(roomID).emit("newMessage", {
           ...newMsg,
