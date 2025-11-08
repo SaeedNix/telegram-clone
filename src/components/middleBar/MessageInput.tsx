@@ -149,7 +149,7 @@ const MessageInput = ({
               ? {
                   ...prev.selectedRoom,
                   messages: prev.selectedRoom.messages.map((msg) =>
-                    msg._id === tempId && msg.status === "pending"
+                    msg.tempId === tempId && msg.status === "pending"  // ✅ استفاده از tempId
                       ? { ...msg, status: "failed" }
                       : msg
                   ),
@@ -187,7 +187,7 @@ const MessageInput = ({
                     ? {
                         ...prev.selectedRoom,
                         messages: prev.selectedRoom.messages.map((msg) =>
-                          msg._id === tempId
+                          msg.tempId === tempId  // ✅ استفاده از tempId
                             ? { ...msg, _id: response._id, status: "sent" }
                             : msg
                         ),
@@ -218,7 +218,7 @@ const MessageInput = ({
                       ? {
                           ...prev.selectedRoom,
                           messages: prev.selectedRoom.messages.map((msg) =>
-                            msg._id === tempId
+                            msg.tempId === tempId  // ✅ استفاده از tempId
                               ? { ...msg, status: "failed" }
                               : msg
                           ),

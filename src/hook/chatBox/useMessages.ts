@@ -91,17 +91,20 @@ const useMessages = ({
               console.log(
                 `[useMessages] Found message to update! tempId: ${tempId} -> _id: ${_id}`
               );
-              return {
+              const updatedMsg = {
                 ...msg,
                 _id,
                 tempId: undefined,
                 status: "sent" as const,
               };
+              console.log(`[useMessages] Updated message:`, updatedMsg);
+              return updatedMsg;
             }
             return msg;
           }
         );
 
+        console.log(`[useMessages] Total messages after update: ${updatedMessages.length}`);
         return {
           selectedRoom: {
             ...prev.selectedRoom!,
