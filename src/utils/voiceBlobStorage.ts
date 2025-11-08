@@ -53,7 +53,7 @@ export const voiceBlobStorage = {
 
         transaction.oncomplete = () => {
           db.close();
-          console.log("Blob saved successfully:", id);
+          // console.log("Blob saved successfully:", id);
           resolve();
         };
 
@@ -119,8 +119,8 @@ export const voiceBlobStorage = {
         const db = await initializeDB();
         const transaction = db.transaction("voiceBlobs", "readwrite");
         const store = transaction.objectStore("voiceBlobs");
-        
-        // فقط همون آیدی خاص رو پاک کن
+
+        // Just delete the blob with the specified id
         const deleteRequest = store.delete(id);
 
         deleteRequest.onsuccess = () => {
