@@ -6,7 +6,10 @@ import { UserStoreUpdater } from "@/stores/userStore";
 import { SocketsProps } from "@/stores/useSockets";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { pendingMessagesService, PendingMessage } from "@/utils/pendingMessages";
+import {
+  pendingMessagesService,
+  PendingMessage,
+} from "@/utils/pendingMessages";
 import { uploadFile as uploadFileWithRetry } from "@/utils";
 import { voiceBlobStorage } from "@/utils/voiceBlobStorage";
 
@@ -68,8 +71,10 @@ const useConnection = ({
       if (roomData) {
         setter(() => {
           // Get pending messages for this room
-          const pendingMessages = pendingMessagesService.getPendingMessages(roomData._id);
-          
+          const pendingMessages = pendingMessagesService.getPendingMessages(
+            roomData._id
+          );
+
           const serverMessages = roomData.messages || [];
 
           // Merge server messages with pending messages
@@ -321,6 +326,29 @@ const useConnection = ({
       );
     });
 
+    socket.on("newMessageIdUpdate", ({ tempId, _id }) => {
+      console.log(
+        `[Client] Received newMessageIdUpdate - tempId: ${tempId}, _id: ${_id}`
+      );
+
+      // Update the message in current room if visible
+      if (selectedRoom) {
+        setRooms((prevRooms) =>
+          prevRooms.map((room) => {
+            if (room._id === selectedRoom._id && room.messages) {
+              return {
+                ...room,
+                messages: room.messages.map((msg) =>
+                  msg.tempId === tempId ? { ...msg, _id, status: "sent" } : msg
+                ),
+              };
+            }
+            return room;
+          })
+        );
+      }
+    });
+
     socket.on("connect", () => {
       setStatus("Telegram");
       socket.emit("getRooms", userId);
@@ -368,6 +396,7 @@ const useConnection = ({
         "deleteRoom",
         "seenMsg",
         "updateRoomData",
+        "newMessageIdUpdate",
       ].forEach((event) => socket.off(event));
     };
   }, [selectedRoom, setter, userDataUpdater, userId]);

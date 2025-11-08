@@ -179,6 +179,7 @@ const MessageInput = ({
             clearTimeout(timeoutId);
 
             if (response?.success) {
+              console.log(`[MessageInput] Callback success for tempId: ${tempId}, _id: ${response._id}`);
               // Update message with actual _id and status 'sent'
               setter(
                 (prev: GlobalStoreProps): Partial<GlobalStoreProps> => ({

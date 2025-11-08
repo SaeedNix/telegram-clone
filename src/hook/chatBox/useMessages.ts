@@ -76,12 +76,15 @@ const useMessages = ({
       tempID: string;
       _id: string;
     }) => {
+      console.log(`[useMessages] Updating tempID ${tempID} to _id ${_id}`);
       playRingSound();
       setter((prev) => ({
         selectedRoom: {
           ...prev.selectedRoom!,
           messages: (prev.selectedRoom?.messages || []).map((msg) =>
-            msg._id === tempID ? { ...msg, _id } : msg
+            msg._id === tempID
+              ? { ...msg, _id, tempID: undefined, status: "sent" as const }
+              : msg
           ),
         },
       }));
