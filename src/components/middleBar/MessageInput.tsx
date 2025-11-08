@@ -149,7 +149,7 @@ const MessageInput = ({
               ? {
                   ...prev.selectedRoom,
                   messages: prev.selectedRoom.messages.map((msg) =>
-                    msg.tempId === tempId && msg.status === "pending"  // ✅ استفاده از tempId
+                    msg.tempId === tempId && msg.status === "pending"
                       ? { ...msg, status: "failed" }
                       : msg
                   ),
@@ -179,7 +179,6 @@ const MessageInput = ({
             clearTimeout(timeoutId);
 
             if (response?.success) {
-              console.log(`[MessageInput] Callback success for tempId: ${tempId}, _id: ${response._id}`);
               // Update message with actual _id and status 'sent'
               setter(
                 (prev: GlobalStoreProps): Partial<GlobalStoreProps> => ({
@@ -187,7 +186,7 @@ const MessageInput = ({
                     ? {
                         ...prev.selectedRoom,
                         messages: prev.selectedRoom.messages.map((msg) =>
-                          msg.tempId === tempId  // ✅ استفاده از tempId
+                          msg.tempId === tempId
                             ? { ...msg, _id: response._id, status: "sent" }
                             : msg
                         ),
@@ -218,7 +217,7 @@ const MessageInput = ({
                       ? {
                           ...prev.selectedRoom,
                           messages: prev.selectedRoom.messages.map((msg) =>
-                            msg.tempId === tempId  // ✅ استفاده از tempId
+                            msg.tempId === tempId // ✅ استفاده از tempId
                               ? { ...msg, status: "failed" }
                               : msg
                           ),

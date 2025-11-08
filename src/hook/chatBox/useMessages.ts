@@ -76,42 +76,17 @@ const useMessages = ({
       tempId: string;
       _id: string;
     }) => {
-      console.log(
-        `[useMessages] Received newMessageIdUpdate - tempId: ${tempId}, _id: ${_id}`
-      );
-
       playRingSound();
-      setter((prev) => {
-        const updatedMessages = (prev.selectedRoom?.messages || []).map(
-          (msg) => {
-            console.log(
-              `[useMessages] Checking message - _id: ${msg._id}, tempId: ${msg.tempId}`
-            );
-            if (msg.tempId === tempId) {
-              console.log(
-                `[useMessages] Found message to update! tempId: ${tempId} -> _id: ${_id}`
-              );
-              const updatedMsg = {
-                ...msg,
-                _id,
-                tempId: undefined,
-                status: "sent" as const,
-              };
-              console.log(`[useMessages] Updated message:`, updatedMsg);
-              return updatedMsg;
-            }
-            return msg;
-          }
-        );
-
-        console.log(`[useMessages] Total messages after update: ${updatedMessages.length}`);
-        return {
-          selectedRoom: {
-            ...prev.selectedRoom!,
-            messages: updatedMessages,
-          },
-        };
-      });
+      setter((prev) => ({
+        selectedRoom: {
+          ...prev.selectedRoom!,
+          messages: (prev.selectedRoom?.messages || []).map((msg) =>
+            msg.tempId === tempId
+              ? { ...msg, _id, tempId: undefined, status: "sent" as const }
+              : msg
+          ),
+        },
+      }));
     };
 
     const handleSeenMsg = ({

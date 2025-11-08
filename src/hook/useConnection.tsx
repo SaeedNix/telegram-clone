@@ -327,10 +327,6 @@ const useConnection = ({
     });
 
     socket.on("newMessageIdUpdate", ({ tempId, _id }) => {
-      console.log(
-        `[Client] Received newMessageIdUpdate - tempId: ${tempId}, _id: ${_id}`
-      );
-
       // Update the message in current room if visible
       if (selectedRoom) {
         setRooms((prevRooms) =>
