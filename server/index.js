@@ -61,9 +61,17 @@ io.on("connection", (socket) => {
           roomID,
         });
         callback({ success: true, _id: newMsg._id });
+        
+        // Check if message still has correct status after all operations
+        setTimeout(async () => {
+          const checkMsg = await MessageSchema.findById(newMsg._id);
+          console.log(`[Server] Message status after all operations: ${checkMsg?.status}, _id: ${checkMsg?._id}`);
+        }, 1000);
       } else {
         // Create new
         newMsg = await MessageSchema.create(msgData);
+        console.log(`[Server] Created message with _id: ${newMsg._id}, tempId: ${tempId}, status: ${newMsg.status}`);
+        
         // Populate the sender field before sending
         const populatedMsg = await MessageSchema.findById(newMsg._id)
           .populate("sender", "name username avatar _id")
