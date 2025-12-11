@@ -215,7 +215,9 @@ const Settings = ({ getBack, updateRoute }: Props) => {
                 >
                   {avatar ? (
                     <Image
-                      src={`${avatar}${avatar.includes('?') ? '&' : '?'}t=${Date.now()}`}
+                      src={`${avatar}${
+                        avatar.includes("?") ? "&" : "?"
+                      }t=${Date.now()}`}
                       className="cursor-pointer object-cover size-full rounded-full"
                       width={55}
                       height={55}
@@ -414,10 +416,10 @@ const Settings = ({ getBack, updateRoute }: Props) => {
             Created with 💙 by{" "}
             <a
               target="_blank"
-              href="https://github.com/Saeed-Abedini"
+              href="https://github.com/SaeedNix"
               className="text-darkBlue"
             >
-              SAEED
+              SaeedNix
             </a>{" "}
           </div>
         </div>
