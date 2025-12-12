@@ -216,7 +216,7 @@ const Message = memo((msgData: MessageModel & msgDataProps) => {
             </p>
           )}
 
-          <div className="flex flex-col text-sm gap-1 p-1 mt-1 break-words mb-3">
+          <div className="flex flex-col text-sm gap-1 p-1 mt-1 wrap-break-word mb-3">
             {replayedToMessage && (
               <div
                 onClick={(e) => {
@@ -232,14 +232,14 @@ const Message = memo((msgData: MessageModel & msgDataProps) => {
                 <span
                   className={`absolute ${
                     isFromMe ? "bg-white" : "bg-green-500"
-                  } left-0 inset-y-0 w-[3px] h-full`}
+                  } left-0 inset-y-0 w-0.75 h-full`}
                 ></span>
-                <p className="font-vazirBold text-xs break-words text-start line-clamp-1 text-ellipsis">
+                <p className="font-vazirBold text-xs wrap-break-word text-start line-clamp-1 text-ellipsis">
                   {replayedToMessage.hideFor.includes(myId)
                     ? "Message deleted"
                     : replayedTo?.username}
                 </p>
-                <p className="font-thin break-words line-clamp-1 text-ellipsis text-left text-xs whitespace-pre-wrap">
+                <p className="font-thin wrap-break-word line-clamp-1 text-ellipsis text-left text-xs whitespace-pre-wrap">
                   {!replayedToMessage.hideFor.includes(myId) &&
                     (replayedTo?.message || "Voice Message")}
                 </p>
@@ -269,7 +269,7 @@ const Message = memo((msgData: MessageModel & msgDataProps) => {
           >
             {isChannel && (
               <div className="flex items-end text-[10px]">
-                <IoEye size={14} className="mb-[1.2px] mr-[2px]" />
+                <IoEye size={14} className="mb-[1.2px] mr-0.5" />
                 {seen.length > 0 ? seen.length : ""}
               </div>
             )}
