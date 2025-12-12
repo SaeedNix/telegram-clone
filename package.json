@@ -22,7 +22,7 @@
     "emoji-picker-react": "^4.12.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
-    "next": "16.0.7",
+    "next": "16.0.9",
     "postcss": "^8.5.1",
     "react": "19.1.1",
     "react-dom": "19.1.1",
@@ -47,7 +47,7 @@
     "autoprefixer": "^10.4.20",
     "daisyui": "^5.0.35",
     "eslint": "^9",
-    "eslint-config-next": "16.0.7",
+    "eslint-config-next": "16.0.9",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0",
     "typescript": "5.9.2"
